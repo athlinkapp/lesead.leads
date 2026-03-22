@@ -7,6 +7,7 @@ import monitoringRoutes from './routes/monitoring';
 import pipelineRoutes from './routes/pipeline';
 import billingRoutes from './routes/billing';
 import userDataRoutes from './routes/userData';
+import authRoutes from './routes/auth';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/monitoring', monitoringRoutes);
 app.use('/api/pipeline', pipelineRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/user-data', userDataRoutes);
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
   console.log(`[LeSead API] Running on http://localhost:${PORT}`);
