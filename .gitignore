@@ -33,5 +33,3 @@ temporary screenshots/
 # Misc
 screenshot*.mjs
 serve.mjs
-package-lock.json
-package.json
