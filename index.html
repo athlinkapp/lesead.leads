@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeSead — AI-Powered Lead Generation for Contractors</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg:      '#070d08',
+            surface: '#0d1a0f',
+            card:    '#111f13',
+            border:  '#1c2e1f',
+            'green-bright': '#4ade80',
+            'green-mid':    '#22c55e',
+            'green-deep':   '#166534',
+            'green-subtle': '#14532d',
+            muted:   '#a0b8a4',
+            dim:     '#6b8070',
+          },
+          fontFamily: {
+            display: ['"DM Serif Display"', 'Georgia', 'serif'],
+            sans:    ['Inter', 'system-ui', 'sans-serif'],
+          },
+          letterSpacing: {
+            tightest: '-0.04em',
+            tighter:  '-0.03em',
+            tight:    '-0.02em',
+          },
+          lineHeight: {
+            relaxed: '1.7',
+          },
+          boxShadow: {
+            'glow-sm':  '0 0 16px 0 rgba(74,222,128,0.08)',
+            'glow':     '0 0 32px 0 rgba(74,222,128,0.12)',
+            'glow-lg':  '0 0 64px 0 rgba(74,222,128,0.18)',
+            'card':     '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3)',
+            'card-hover': '0 2px 6px rgba(0,0,0,0.5), 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(74,222,128,0.12)',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: #070d08; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #070d08;
+      color: #e8f0e9;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    }
+
+    /* Radial gradient overlays */
+    .hero-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+
+    /* Smooth transitions */
+    a, button { transition: color 0.2s cubic-bezier(0.4,0,0.2,1), background 0.2s cubic-bezier(0.4,0,0.2,1), opacity 0.2s cubic-bezier(0.4,0,0.2,1), transform 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s cubic-bezier(0.4,0,0.2,1); }
+
+    /* Card hover lift */
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5), 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(74,222,128,0.12);
+    }
+
+    /* Nav glass */
+    .nav-glass {
+      background: rgba(7,13,8,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(74,222,128,0.07);
+    }
+
+    /* Gradient text */
+    .text-gradient {
+      background: linear-gradient(135deg, #ffffff 30%, #4ade80 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Green pill badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.2);
+      color: #4ade80;
+    }
+
+    /* Primary button */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: #22c55e;
+      color: #020a03;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      letter-spacing: -0.01em;
+      box-shadow: 0 0 0 0 rgba(74,222,128,0);
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      background: #4ade80;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(74,222,128,0.25);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:focus-visible { outline: 2px solid #4ade80; outline-offset: 3px; }
+
+    /* Ghost button */
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      background: transparent;
+      color: #e8f0e9;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 0.9375rem;
+      letter-spacing: -0.01em;
+      border: 1px solid rgba(232,240,233,0.15);
+      cursor: pointer;
+    }
+    .btn-ghost:hover {
+      background: rgba(232,240,233,0.06);
+      border-color: rgba(232,240,233,0.25);
+      transform: translateY(-1px);
+    }
+    .btn-ghost:focus-visible { outline: 2px solid #4ade80; outline-offset: 3px; }
+
+    /* Feature icon container */
+    .icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Pricing card */
+    .pricing-card {
+      border-radius: 20px;
+      background: #0d1a0f;
+      border: 1px solid #1c2e1f;
+      padding: 36px;
+      transition: transform 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .pricing-card:hover {
+      transform: translateY(-3px);
+    }
+    .pricing-card.featured {
+      background: #0f1f12;
+      border-color: rgba(74,222,128,0.3);
+      box-shadow: 0 0 0 1px rgba(74,222,128,0.12), 0 24px 64px rgba(0,0,0,0.5), 0 0 80px rgba(74,222,128,0.06);
+    }
+
+    /* Step line */
+    .step-line {
+      position: absolute;
+      top: 22px;
+      left: calc(50% + 24px);
+      right: calc(-50% + 24px);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(74,222,128,0.3), rgba(74,222,128,0.05));
+    }
+
+    /* Stat card */
+    .stat-card {
+      text-align: center;
+      padding: 32px 24px;
+      border-radius: 16px;
+      background: #0d1a0f;
+      border: 1px solid #1c2e1f;
+    }
+
+    /* Mobile nav */
+    #mobile-menu { display: none; }
+    #mobile-menu.open { display: block; }
+
+    /* Scroll animation — starts visible, animates in */
+    .fade-up {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1);
+    }
+    .fade-up.animate-out {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .fade-up.animate-out.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(74,222,128,0.15), transparent);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────── NAV ─────────────────── -->
+<nav class="nav-glass fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-bright rounded-lg">
+      <img src="App Assets/Logo.png" alt="LeSead logo" class="h-7 w-auto" />
+      <span style="font-family:'DM Serif Display',serif; font-size:1.25rem; letter-spacing:-0.02em; color:#e8f0e9;">LeSead</span>
+    </a>
+
+    <!-- Desktop links -->
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#features" class="text-sm font-medium text-muted hover:text-white transition-colors focus-visible:outline-none focus-visible:text-green-bright">Features</a>
+      <a href="#how-it-works" class="text-sm font-medium text-muted hover:text-white transition-colors focus-visible:outline-none focus-visible:text-green-bright">How It Works</a>
+      <a href="#pricing" class="text-sm font-medium text-muted hover:text-white transition-colors focus-visible:outline-none focus-visible:text-green-bright">Pricing</a>
+    </div>
+
+    <!-- CTA -->
+    <div class="hidden md:flex items-center gap-3">
+      <a href="http://localhost:3004/auth" class="text-sm font-medium text-muted hover:text-white transition-colors focus-visible:outline-none focus-visible:text-green-bright">Sign In</a>
+      <a href="http://localhost:3004/auth" class="btn-primary" style="padding:10px 20px; font-size:0.875rem;">Get Started Free</a>
+    </div>
+
+    <!-- Hamburger -->
+    <button id="menu-toggle" class="md:hidden p-2 rounded-lg text-muted hover:text-white focus-visible:outline-2 focus-visible:outline-green-bright" aria-label="Open menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="19" y2="6"/><line x1="3" y1="12" x2="19" y2="12"/><line x1="3" y1="18" x2="19" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden border-t border-border px-6 pb-5 pt-4 space-y-3">
+    <a href="#features" class="block text-sm font-medium text-muted hover:text-white py-2">Features</a>
+    <a href="#how-it-works" class="block text-sm font-medium text-muted hover:text-white py-2">How It Works</a>
+    <a href="#pricing" class="block text-sm font-medium text-muted hover:text-white py-2">Pricing</a>
+    <div class="pt-2 flex flex-col gap-2">
+      <a href="http://localhost:3004/auth" class="text-sm font-medium text-muted hover:text-white py-2">Sign In</a>
+      <a href="http://localhost:3004/auth" class="btn-primary justify-center" style="padding:12px 20px; font-size:0.875rem;">Get Started Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────────── HERO ─────────────────── -->
+<section class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-20 overflow-hidden">
+
+  <!-- Background radial glows -->
+  <div class="hero-glow w-[700px] h-[500px] bg-green-deep opacity-30" style="top:-100px;left:50%;transform:translateX(-50%);"></div>
+  <div class="hero-glow w-[400px] h-[300px] bg-green-mid opacity-10" style="bottom:0;right:10%;"></div>
+  <div class="hero-glow w-[300px] h-[300px]" style="top:30%;left:5%;background:#166534;opacity:0.12;filter:blur(90px);"></div>
+
+  <div class="relative z-10 max-w-4xl mx-auto">
+    <!-- Badge -->
+    <div class="flex justify-center mb-8 fade-up">
+      <span class="badge">
+        <span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;box-shadow:0 0 6px #4ade80;"></span>
+        AI-Powered Lead Generation
+      </span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="fade-up" style="font-family:'DM Serif Display',serif; font-size:clamp(2.75rem,7vw,5.5rem); line-height:1.05; letter-spacing:-0.04em; margin-bottom:1.5rem; delay:0.1s;">
+      <span style="color:#e8f0e9;">Grow your </span><span class="text-gradient">contractor business</span><br />
+      <span style="color:#e8f0e9;">with smarter leads</span>
+    </h1>
+
+    <!-- Subheadline -->
+    <p class="fade-up text-muted text-lg md:text-xl max-w-2xl mx-auto mb-10" style="line-height:1.7; transition-delay:0.15s;">
+      LeSead monitors the web for homeowner signals, generates AI-qualified opportunities, and writes outreach that converts — so you can focus on the job, not the hunt.
+    </p>
+
+    <!-- CTAs -->
+    <div class="fade-up flex flex-col sm:flex-row items-center justify-center gap-4 mb-16" style="transition-delay:0.2s;">
+      <a href="http://localhost:3004/auth" class="btn-primary">
+        Start for free
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </a>
+      <a href="#how-it-works" class="btn-ghost">See how it works</a>
+    </div>
+
+    <!-- Social proof strip -->
+    <div class="fade-up flex flex-wrap items-center justify-center gap-6 text-sm text-dim" style="transition-delay:0.25s;">
+      <span class="flex items-center gap-2">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="#4ade80"><path d="M7.5 0L9.27 5.27H15L10.36 8.73L12.13 14L7.5 10.54L2.87 14L4.64 8.73L0 5.27H5.73Z"/></svg>
+        No credit card required
+      </span>
+      <span class="flex items-center gap-2">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="#4ade80"><path d="M7.5 0L9.27 5.27H15L10.36 8.73L12.13 14L7.5 10.54L2.87 14L4.64 8.73L0 5.27H5.73Z"/></svg>
+        Set up in under 5 minutes
+      </span>
+      <span class="flex items-center gap-2">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="#4ade80"><path d="M7.5 0L9.27 5.27H15L10.36 8.73L12.13 14L7.5 10.54L2.87 14L4.64 8.73L0 5.27H5.73Z"/></svg>
+        Cancel anytime
+      </span>
+    </div>
+  </div>
+
+  <!-- Dashboard mockup -->
+  <div class="fade-up relative z-10 w-full max-w-5xl mx-auto mt-20" style="transition-delay:0.3s;">
+    <div style="border-radius:20px; background:#0d1a0f; border:1px solid #1c2e1f; padding:20px; box-shadow:0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(74,222,128,0.06), 0 0 80px rgba(74,222,128,0.04);">
+      <!-- Browser chrome -->
+      <div class="flex items-center gap-2 mb-4 pb-4" style="border-bottom:1px solid #1c2e1f;">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#febc2e;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840;"></div>
+        <div class="flex-1 mx-4 text-center text-xs text-dim" style="background:#111f13;border-radius:6px;padding:4px 12px;border:1px solid #1c2e1f;">app.lesead.com/dashboard</div>
+      </div>
+
+      <!-- Mock dashboard grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Stat cards -->
+        <div style="background:#111f13;border-radius:12px;border:1px solid #1c2e1f;padding:20px;">
+          <div class="text-xs text-dim mb-1 uppercase tracking-widest">Leads Found</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:#e8f0e9;letter-spacing:-0.03em;">247</div>
+          <div class="text-xs" style="color:#4ade80;margin-top:4px;">↑ 18 this week</div>
+        </div>
+        <div style="background:#111f13;border-radius:12px;border:1px solid #1c2e1f;padding:20px;">
+          <div class="text-xs text-dim mb-1 uppercase tracking-widest">Outreach Sent</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:#e8f0e9;letter-spacing:-0.03em;">84</div>
+          <div class="text-xs" style="color:#4ade80;margin-top:4px;">↑ 32% reply rate</div>
+        </div>
+        <div style="background:#111f13;border-radius:12px;border:1px solid #1c2e1f;padding:20px;">
+          <div class="text-xs text-dim mb-1 uppercase tracking-widest">Pipeline Value</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:#e8f0e9;letter-spacing:-0.03em;">$48k</div>
+          <div class="text-xs" style="color:#4ade80;margin-top:4px;">↑ 3 new this week</div>
+        </div>
+
+        <!-- Lead monitor preview -->
+        <div class="md:col-span-2" style="background:#111f13;border-radius:12px;border:1px solid #1c2e1f;padding:20px;">
+          <div class="text-xs text-dim mb-3 uppercase tracking-widest">Live Lead Monitor</div>
+          <div class="space-y-2">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1a0f;border-radius:8px;border:1px solid #1c2e1f;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;flex-shrink:0;"></div>
+              <div>
+                <div class="text-sm" style="color:#e8f0e9;">"Anyone know a good roofer in Denver?"</div>
+                <div class="text-xs text-dim" style="margin-top:2px;">Reddit r/Denver · 2m ago · High intent</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1a0f;border-radius:8px;border:1px solid #1c2e1f;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;flex-shrink:0;"></div>
+              <div>
+                <div class="text-sm" style="color:#e8f0e9;">Storm damage claims spiking — Boulder County</div>
+                <div class="text-xs text-dim" style="margin-top:2px;">Property signal · 5m ago · Area match</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1a0f;border-radius:8px;border:1px solid #1c2e1f;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;opacity:0.6;flex-shrink:0;border-radius:50%;"></div>
+              <div>
+                <div class="text-sm" style="color:#a0b8a4;">Craigslist: roofing estimate needed asap</div>
+                <div class="text-xs text-dim" style="margin-top:2px;">Craigslist · 12m ago · Medium intent</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI outreach preview -->
+        <div style="background:#111f13;border-radius:12px;border:1px solid #1c2e1f;padding:20px;">
+          <div class="text-xs text-dim mb-3 uppercase tracking-widest">AI Outreach</div>
+          <div style="font-size:0.8rem;color:#a0b8a4;line-height:1.6;font-style:italic;">
+            "Hi Sarah, I saw your post about storm damage — our crew is already working two blocks away and can fit you in this week. Here's a quick estimate..."
+          </div>
+          <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(74,222,128,0.08);border-radius:6px;border:1px solid rgba(74,222,128,0.15);font-size:0.75rem;color:#4ade80;">
+            <svg width="12" height="12" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/><path d="M20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ready to send
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glow under mockup -->
+    <div style="position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:60%;height:80px;background:rgba(74,222,128,0.08);filter:blur(40px);border-radius:50%;pointer-events:none;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─────────────────── STATS ─────────────────── -->
+<section class="py-20 px-6">
+  <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="stat-card fade-up">
+      <div style="font-family:'DM Serif Display',serif;font-size:2.5rem;color:#4ade80;letter-spacing:-0.04em;margin-bottom:4px;">10x</div>
+      <div class="text-sm text-muted">faster lead discovery</div>
+    </div>
+    <div class="stat-card fade-up" style="transition-delay:0.05s;">
+      <div style="font-family:'DM Serif Display',serif;font-size:2.5rem;color:#4ade80;letter-spacing:-0.04em;margin-bottom:4px;">3×</div>
+      <div class="text-sm text-muted">more replies vs cold email</div>
+    </div>
+    <div class="stat-card fade-up" style="transition-delay:0.1s;">
+      <div style="font-family:'DM Serif Display',serif;font-size:2.5rem;color:#4ade80;letter-spacing:-0.04em;margin-bottom:4px;">24/7</div>
+      <div class="text-sm text-muted">automated monitoring</div>
+    </div>
+    <div class="stat-card fade-up" style="transition-delay:0.15s;">
+      <div style="font-family:'DM Serif Display',serif;font-size:2.5rem;color:#4ade80;letter-spacing:-0.04em;margin-bottom:4px;">&lt;5m</div>
+      <div class="text-sm text-muted">to first lead, guaranteed</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─────────────────── FEATURES ─────────────────── -->
+<section id="features" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-16 fade-up">
+      <span class="badge mb-5">Everything you need</span>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-0.03em;line-height:1.1;color:#e8f0e9;margin-bottom:1rem;">One platform.<br/>Every edge.</h2>
+      <p class="text-muted text-lg max-w-xl mx-auto" style="line-height:1.7;">From discovery to signed contract — LeSead handles the full top-of-funnel so your sales team only talks to warm leads.</p>
+    </div>
+
+    <!-- Feature grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Lead Monitor -->
+      <div class="feature-card fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);transition:transform 0.2s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);">
+        <div class="icon-wrap mb-5">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:8px;">Lead Monitor</h3>
+        <p class="text-sm text-muted" style="line-height:1.7;">Scans Reddit, Craigslist, and social sources around the clock for high-intent homeowner signals in your service area.</p>
+      </div>
+
+      <!-- AI Opportunities -->
+      <div class="feature-card fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);transition:transform 0.2s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);transition-delay:0.05s;">
+        <div class="icon-wrap mb-5">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:8px;">AI Opportunities</h3>
+        <p class="text-sm text-muted" style="line-height:1.7;">Gemini + Claude score and rank every lead, surfacing the ones most likely to convert so you never waste time chasing cold prospects.</p>
+      </div>
+
+      <!-- Smart Outreach -->
+      <div class="feature-card fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);transition:transform 0.2s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);transition-delay:0.1s;">
+        <div class="icon-wrap mb-5">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:8px;">Smart Outreach</h3>
+        <p class="text-sm text-muted" style="line-height:1.7;">One-click DMs, emails, and ad hooks written by AI — personalized to each lead's situation and tuned to your brand voice.</p>
+      </div>
+
+      <!-- Pipeline CRM -->
+      <div class="feature-card fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);transition:transform 0.2s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);">
+        <div class="icon-wrap mb-5">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:8px;">Pipeline CRM</h3>
+        <p class="text-sm text-muted" style="line-height:1.7;">Save leads, add notes, track status. A lightweight CRM built for contractors — no bloat, no 90-field forms, just what you need.</p>
+      </div>
+
+      <!-- Audience Builder -->
+      <div class="feature-card fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);transition:transform 0.2s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);transition-delay:0.05s;">
+        <div class="icon-wrap mb-5">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:8px;">Audience Builder</h3>
+        <p class="text-sm text-muted" style="line-height:1.7;">Build hyper-targeted homeowner lists using ATTOM property data, then export directly for Facebook and Google ad campaigns.</p>
+      </div>
+
+      <!-- ICP Analysis -->
+      <div class="feature-card fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 24px rgba(0,0,0,0.3);transition:transform 0.2s cubic-bezier(0.4,0,0.2,1),box-shadow 0.2s cubic-bezier(0.4,0,0.2,1);transition-delay:0.1s;">
+        <div class="icon-wrap mb-5">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:8px;">ICP Analysis</h3>
+        <p class="text-sm text-muted" style="line-height:1.7;">AI builds your Ideal Customer Profile, customer personas, and go-to-market strategy from your business info — automatically updated as you grow.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─────────────────── HOW IT WORKS ─────────────────── -->
+<section id="how-it-works" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <span class="badge mb-5">The process</span>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-0.03em;line-height:1.1;color:#e8f0e9;margin-bottom:1rem;">From signal to signed<br/>in three steps</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+
+      <!-- Step 1 -->
+      <div class="fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:32px 28px;text-align:center;">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(74,222,128,0.12);border:1.5px solid rgba(74,222,128,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'DM Serif Display',serif;font-size:1.35rem;color:#4ade80;box-shadow:0 0 16px rgba(74,222,128,0.1);">1</div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:10px;">Tell us about your business</h3>
+        <p style="font-size:0.875rem;color:#a0b8a4;line-height:1.7;">Enter your trade, service area, and ideal job type. LeSead builds your profile and starts monitoring in seconds.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:32px 28px;text-align:center;transition-delay:0.1s;">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(74,222,128,0.12);border:1.5px solid rgba(74,222,128,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'DM Serif Display',serif;font-size:1.35rem;color:#4ade80;box-shadow:0 0 16px rgba(74,222,128,0.1);">2</div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:10px;">Review AI-qualified leads</h3>
+        <p style="font-size:0.875rem;color:#a0b8a4;line-height:1.7;">Every morning, fresh leads land in your dashboard — scored, summarized, and ready to act on. No noise, just signal.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="fade-up" style="background:#0d1a0f;border:1px solid #1c2e1f;border-radius:16px;padding:32px 28px;text-align:center;transition-delay:0.2s;">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(74,222,128,0.12);border:1.5px solid rgba(74,222,128,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'DM Serif Display',serif;font-size:1.35rem;color:#4ade80;box-shadow:0 0 16px rgba(74,222,128,0.1);">3</div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;letter-spacing:-0.02em;color:#e8f0e9;margin-bottom:10px;">Send outreach, close jobs</h3>
+        <p style="font-size:0.875rem;color:#a0b8a4;line-height:1.7;">One click generates a personalized message. Send it, track responses in the pipeline, repeat. It really is that simple.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─────────────────── PRICING ─────────────────── -->
+<section id="pricing" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <span class="badge mb-5">Pricing</span>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-0.03em;line-height:1.1;color:#e8f0e9;margin-bottom:1rem;">Simple, honest pricing</h2>
+      <p class="text-muted text-lg max-w-md mx-auto" style="line-height:1.7;">Start free, scale as you grow. Every plan includes full access to the lead engine.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+
+      <!-- Starter -->
+      <div class="pricing-card fade-up">
+        <div class="text-xs text-dim uppercase tracking-widest mb-2">Starter</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:2.75rem;letter-spacing:-0.04em;color:#e8f0e9;margin-bottom:4px;">$29<span style="font-family:'Inter',sans-serif;font-size:1.25rem;color:#e8f0e9;letter-spacing:0;">.99</span><span style="font-family:'Inter',sans-serif;font-size:1rem;color:#a0b8a4;letter-spacing:0;">/mo</span></div>
+        <p class="text-sm text-muted mb-8" style="line-height:1.6;">For solo contractors getting started with automated lead gen.</p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            50 lead scans / month
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            AI opportunity scoring
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            25 outreach messages / month
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Basic pipeline CRM
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:#4a5e4d;">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4a5e4d" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Audience builder
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:#4a5e4d;">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4a5e4d" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            ICP &amp; persona analysis
+          </li>
+        </ul>
+        <a href="http://localhost:3004/auth" class="btn-ghost w-full justify-center" style="padding:13px 20px;">Get started</a>
+      </div>
+
+      <!-- Pro (featured) -->
+      <div class="pricing-card featured fade-up relative" style="transition-delay:0.1s;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;" class="badge">Most popular</div>
+        <div class="text-xs text-dim uppercase tracking-widest mb-2">Pro</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:2.75rem;letter-spacing:-0.04em;color:#e8f0e9;margin-bottom:4px;">$79<span style="font-family:'Inter',sans-serif;font-size:1.25rem;color:#e8f0e9;letter-spacing:0;">.99</span><span style="font-family:'Inter',sans-serif;font-size:1rem;color:#a0b8a4;letter-spacing:0;">/mo</span></div>
+        <p class="text-sm text-muted mb-8" style="line-height:1.6;">For growing teams that need more volume and deeper insights.</p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            250 lead scans / month
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            AI opportunity scoring
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            150 outreach messages / month
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Full pipeline CRM
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Audience builder (ATTOM data)
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            ICP &amp; persona analysis
+          </li>
+        </ul>
+        <a href="http://localhost:3004/auth" class="btn-primary w-full justify-center">Get started</a>
+      </div>
+
+      <!-- Scale -->
+      <div class="pricing-card fade-up" style="transition-delay:0.2s;">
+        <div class="text-xs text-dim uppercase tracking-widest mb-2">Scale</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:2.75rem;letter-spacing:-0.04em;color:#e8f0e9;margin-bottom:4px;">$199<span style="font-family:'Inter',sans-serif;font-size:1.25rem;color:#e8f0e9;letter-spacing:0;">.99</span><span style="font-family:'Inter',sans-serif;font-size:1rem;color:#a0b8a4;letter-spacing:0;">/mo</span></div>
+        <p class="text-sm text-muted mb-8" style="line-height:1.6;">For agencies and large contractors running multiple crews.</p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited lead scans
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Priority AI scoring
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited outreach
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Multi-user pipeline CRM
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Audience builder + export
+          </li>
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <svg class="flex-shrink-0 mt-0.5" width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Dedicated onboarding &amp; support
+          </li>
+        </ul>
+        <a href="#" class="btn-ghost w-full justify-center">Contact sales</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─────────────────── CTA BANNER ─────────────────── -->
+<section class="py-24 px-6 relative overflow-hidden">
+  <!-- Background glow -->
+  <div class="hero-glow w-[600px] h-[400px] bg-green-deep opacity-25" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+  <div class="max-w-3xl mx-auto text-center relative z-10 fade-up">
+    <img src="App Assets/Logo.png" alt="LeSead" class="h-12 w-auto mx-auto mb-8 opacity-90" />
+    <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.75rem);letter-spacing:-0.04em;line-height:1.08;color:#e8f0e9;margin-bottom:1.25rem;">
+      Plant the seeds.<br/>Watch your pipeline grow.
+    </h2>
+    <p class="text-muted text-lg mb-10 max-w-xl mx-auto" style="line-height:1.7;">
+      Join contractors already using LeSead to find, qualify, and close more homeowner jobs — with less hustle.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="http://localhost:3004/auth" class="btn-primary" style="padding:15px 32px;font-size:1rem;">
+        Start free today
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </a>
+      <a href="#" class="btn-ghost" style="padding:14px 32px;font-size:1rem;">Book a demo</a>
+    </div>
+    <p class="text-sm text-dim mt-6">No credit card needed · Cancel anytime · Setup in 5 minutes</p>
+  </div>
+</section>
+
+<!-- ─────────────────── FOOTER ─────────────────── -->
+<footer style="border-top:1px solid #1c2e1f;background:#070d08;" class="py-12 px-6">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
+      <!-- Brand -->
+      <div class="max-w-xs">
+        <a href="#" class="flex items-center gap-2.5 mb-4">
+          <img src="App Assets/Logo.png" alt="LeSead" class="h-6 w-auto" />
+          <span style="font-family:'DM Serif Display',serif;font-size:1.1rem;letter-spacing:-0.02em;color:#e8f0e9;">LeSead</span>
+        </a>
+        <p class="text-sm text-muted" style="line-height:1.7;">AI-powered lead generation built for contractors. Find homeowners. Close jobs. Grow faster.</p>
+      </div>
+
+      <!-- Links -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+        <div>
+          <div class="text-xs text-dim uppercase tracking-widest mb-4">Product</div>
+          <ul class="space-y-3">
+            <li><a href="#features" class="text-sm text-muted hover:text-white transition-colors">Features</a></li>
+            <li><a href="#pricing" class="text-sm text-muted hover:text-white transition-colors">Pricing</a></li>
+            <li><a href="#" class="text-sm text-muted hover:text-white transition-colors">Changelog</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-xs text-dim uppercase tracking-widest mb-4">Company</div>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-sm text-muted hover:text-white transition-colors">About</a></li>
+            <li><a href="#" class="text-sm text-muted hover:text-white transition-colors">Blog</a></li>
+            <li><a href="#" class="text-sm text-muted hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-xs text-dim uppercase tracking-widest mb-4">Legal</div>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-sm text-muted hover:text-white transition-colors">Privacy</a></li>
+            <li><a href="#" class="text-sm text-muted hover:text-white transition-colors">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider mb-6"></div>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-dim">© 2026 LeSead. All rights reserved.</p>
+      <p class="text-sm text-dim">Built for contractors, by people who get it.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  document.getElementById('menu-toggle').addEventListener('click', function() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('open');
+  });
+
+  // Close mobile menu on link click
+  document.querySelectorAll('#mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.remove('open');
+    });
+  });
+
+  // Scroll-triggered fade-up animations — add animate-out on load, then remove on scroll
+  document.querySelectorAll('.fade-up').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top >= window.innerHeight) {
+      el.classList.add('animate-out');
+    }
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+  document.querySelectorAll('.fade-up.animate-out').forEach(el => {
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
