@@ -34,6 +34,7 @@ const PLANS: {
   icon: React.ElementType
   features: string[]
   highlight?: string
+  moneyBack?: string
   accent?: boolean
 }[] = [
   {
@@ -44,6 +45,7 @@ const PLANS: {
     tagline: 'For solo service businesses ready to start finding leads.',
     description: 'Everything you need to start generating qualified leads daily across the major platforms.',
     icon: Zap,
+    moneyBack: '14-day money-back guarantee',
     features: [
       '5 leads per scan · 1 scan per day',
       'Reddit, Craigslist, Facebook & Nextdoor',
@@ -209,7 +211,7 @@ export default function PricingPage() {
       </div>
 
       {/* Paid plan cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)', gap: isMobile ? '10px' : '16px', alignItems: 'start', overflowX: isMobile ? 'auto' : 'visible', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'] }}>
         {PLANS.map((plan) => {
           const isCurrent = planId === plan.id
           const isLoading = loadingPlan === plan.id
@@ -223,7 +225,7 @@ export default function PricingPage() {
                 backgroundColor: isPro ? 'rgba(13,26,15,0.98)' : '#0d1a0f',
                 border: isCurrent ? '1px solid rgba(74,222,128,0.5)' : isPro ? '1px solid rgba(74,222,128,0.28)' : '1px solid #1c2e1f',
                 borderRadius: '16px',
-                padding: '24px 20px 20px',
+                padding: isMobile ? '14px 10px 14px' : '24px 20px 20px',
                 position: 'relative',
                 boxShadow: isPro ? '0 0 40px rgba(74,222,128,0.07), 0 4px 20px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,0.2)',
                 display: 'flex',
@@ -254,8 +256,8 @@ export default function PricingPage() {
                   <p style={{ color: '#6b8070', fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>{plan.name}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '8px' }}>
-                  <span className={dmSerif.className} style={{ fontSize: '2.4rem', color: isPro ? '#4ade80' : '#e8f0e9', letterSpacing: '-0.04em', lineHeight: 1 }}>{plan.price}</span>
-                  <span style={{ color: '#6b8070', fontSize: '0.82rem' }}>{plan.period}</span>
+                  <span className={dmSerif.className} style={{ fontSize: isMobile ? '1.4rem' : '2.4rem', color: isPro ? '#4ade80' : '#e8f0e9', letterSpacing: '-0.04em', lineHeight: 1 }}>{plan.price}</span>
+                  <span style={{ color: '#6b8070', fontSize: isMobile ? '0.65rem' : '0.82rem' }}>{plan.period}</span>
                 </div>
                 <p style={{ color: '#a0b8a4', fontSize: '0.82rem', margin: 0, lineHeight: 1.55 }}>{plan.description}</p>
               </div>
@@ -269,7 +271,7 @@ export default function PricingPage() {
                     <div style={{ width: '15px', height: '15px', borderRadius: '50%', backgroundColor: isPro ? 'rgba(74,222,128,0.15)' : 'rgba(74,222,128,0.08)', border: `1px solid ${isPro ? 'rgba(74,222,128,0.35)' : 'rgba(74,222,128,0.2)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
                       <Check size={8} color="#4ade80" strokeWidth={3} />
                     </div>
-                    <span style={{ color: '#e8f0e9', fontSize: '0.82rem', lineHeight: 1.5 }}>{f}</span>
+                    <span style={{ color: '#e8f0e9', fontSize: isMobile ? '0.7rem' : '0.82rem', lineHeight: 1.5 }}>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -289,6 +291,13 @@ export default function PricingPage() {
                 >
                   {isLoading ? (<><span style={{ width: '14px', height: '14px', border: '2px solid rgba(2,10,3,0.3)', borderTop: '2px solid #020a03', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} />Redirecting...</>) : 'Upgrade Now'}
                 </button>
+              )}
+
+              {/* Money-back guarantee */}
+              {plan.moneyBack && (
+                <p style={{ textAlign: 'center', color: '#6b8070', fontSize: '0.7rem', margin: '8px 0 0', lineHeight: 1.5 }}>
+                  ✓ {plan.moneyBack}
+                </p>
               )}
 
               {/* Promo code */}
@@ -322,7 +331,7 @@ export default function PricingPage() {
       </div>
 
       <p style={{ textAlign: 'center', color: '#6b8070', fontSize: '0.78rem', marginTop: '28px', lineHeight: 1.6 }}>
-        All plans include a 7-day free trial. Secure payments powered by Stripe.
+        Starter includes a 14-day money-back guarantee. Secure payments powered by Stripe.
       </p>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
