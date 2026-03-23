@@ -1,65 +1,68 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import fs from 'fs'
-import path from 'path'
+import { Pool } from 'pg'
 
 const router = Router()
-
-const USERS_FILE = path.join('/tmp', 'lesead-users.json')
 const JWT_SECRET = process.env.JWT_SECRET ?? 'lesead-secret-key-change-in-prod'
 
-interface User {
-  id: string
-  email: string
-  passwordHash: string
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+})
+
+async function initDb() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
 }
 
-function loadUsers(): User[] {
-  try {
-    if (fs.existsSync(USERS_FILE)) {
-      return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8'))
-    }
-  } catch {}
-  return []
-}
-
-function saveUsers(users: User[]) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2))
-}
+initDb().catch(console.error)
 
 router.post('/signup', async (req, res) => {
   const { email, password } = req.body
   if (!email || !password) return res.status(400).json({ error: 'Email and password required.' })
   if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters.' })
 
-  const users = loadUsers()
-  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-    return res.status(400).json({ error: 'That email is already in use.' })
+  try {
+    const passwordHash = await bcrypt.hash(password, 10)
+    const id = `u-${Date.now()}`
+    await pool.query(
+      'INSERT INTO users (id, email, password_hash) VALUES ($1, $2, $3)',
+      [id, email.toLowerCase(), passwordHash]
+    )
+    const token = jwt.sign({ id, email: email.toLowerCase() }, JWT_SECRET, { expiresIn: '30d' })
+    res.json({ user: { id, email: email.toLowerCase() }, token })
+  } catch (err: any) {
+    if (err.code === '23505') return res.status(400).json({ error: 'That email is already in use.' })
+    console.error(err)
+    res.status(500).json({ error: 'Something went wrong.' })
   }
-
-  const passwordHash = await bcrypt.hash(password, 10)
-  const user: User = { id: `u-${Date.now()}`, email: email.toLowerCase(), passwordHash }
-  users.push(user)
-  saveUsers(users)
-
-  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' })
-  res.json({ user: { id: user.id, email: user.email }, token })
 })
 
 router.post('/signin', async (req, res) => {
   const { email, password } = req.body
   if (!email || !password) return res.status(400).json({ error: 'Email and password required.' })
 
-  const users = loadUsers()
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase())
-  if (!user) return res.status(401).json({ error: 'Email or password is incorrect.' })
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()])
+    const user = result.rows[0]
+    if (!user) return res.status(401).json({ error: 'Email or password is incorrect.' })
 
-  const valid = await bcrypt.compare(password, user.passwordHash)
-  if (!valid) return res.status(401).json({ error: 'Email or password is incorrect.' })
+    const valid = await bcrypt.compare(password, user.password_hash)
+    if (!valid) return res.status(401).json({ error: 'Email or password is incorrect.' })
 
-  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' })
-  res.json({ user: { id: user.id, email: user.email }, token })
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' })
+    res.json({ user: { id: user.id, email: user.email }, token })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Something went wrong.' })
+  }
 })
 
 export default router
