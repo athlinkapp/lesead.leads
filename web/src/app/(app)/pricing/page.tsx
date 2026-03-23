@@ -211,7 +211,7 @@ export default function PricingPage() {
       </div>
 
       {/* Paid plan cards */}
-      <div style={{ display: isMobile ? 'flex' : 'grid', gridTemplateColumns: 'repeat(3, 1fr)', flexDirection: isMobile ? 'row' : undefined, gap: '16px', alignItems: 'start', overflowX: isMobile ? 'auto' : 'visible', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], paddingBottom: isMobile ? '8px' : 0 }}>
+      <div style={{ display: isMobile ? 'flex' : 'grid', gridTemplateColumns: 'repeat(3, 1fr)', flexDirection: isMobile ? 'row' : undefined, gap: '16px', alignItems: 'start', overflowX: isMobile ? 'auto' : 'visible', WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'], paddingBottom: isMobile ? '8px' : 0, paddingTop: '16px' }}>
         {PLANS.map((plan) => {
           const isCurrent = planId === plan.id
           const isLoading = loadingPlan === plan.id
