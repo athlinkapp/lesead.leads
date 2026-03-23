@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Radar, MessageSquare, GitMerge, ArrowRight, Zap, TrendingUp, Activity } from 'lucide-react'
 import { DM_Serif_Display } from 'next/font/google'
 import useAppStore from '@/store/useAppStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const dmSerif = DM_Serif_Display({ subsets: ['latin'], weight: '400' })
 
@@ -27,6 +28,7 @@ export default function DashboardPage() {
   const monitorResults = useAppStore((s) => s.monitorResults)
   const planId = useAppStore((s) => s.planId)
 
+  const isMobile = useIsMobile()
   const greeting = `Good ${getHour()}, ${businessProfile?.businessName ?? 'there'}`
   const alertCount = monitorResults?.alerts?.length ?? 0
 
@@ -37,7 +39,7 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div style={{ maxWidth: '1020px', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ maxWidth: '1020px', fontFamily: 'Inter, system-ui, sans-serif', width: '100%' }}>
       {/* Hero greeting */}
       <div style={{ marginBottom: '36px', position: 'relative' }}>
         {/* Subtle radial glow behind heading */}
@@ -58,7 +60,7 @@ export default function DashboardPage() {
         <h1
           className={dmSerif.className}
           style={{
-            fontSize: '2.5rem',
+            fontSize: isMobile ? '1.8rem' : '2.5rem',
             background: 'linear-gradient(135deg, #ffffff 30%, #4ade80 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -263,8 +265,8 @@ export default function DashboardPage() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '16px',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+          gap: '12px',
           marginBottom: '28px',
         }}
       >
@@ -279,7 +281,7 @@ export default function DashboardPage() {
               backgroundColor: '#0d1a0f',
               border: '1px solid #1c2e1f',
               borderRadius: '16px',
-              padding: '24px 28px',
+              padding: isMobile ? '16px' : '24px 28px',
               transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
               cursor: 'default',
             }}
@@ -344,7 +346,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Bottom grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', alignItems: 'start' }}>
         {/* Recent alerts */}
         <div
           style={{
