@@ -358,39 +358,42 @@ export default function MonitorPage() {
       </div>
 
       {/* Run button */}
-      <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+      <div style={{ marginBottom: '24px' }}>
         <button
           onClick={handleScan}
           disabled={isScanning || !businessProfile || scanLimitReached}
           style={{
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '9px',
+            justifyContent: 'center',
+            gap: '10px',
+            width: '100%',
             backgroundColor: scanLimitReached ? 'rgba(74,222,128,0.06)' : isScanning || !businessProfile ? '#166534' : '#22c55e',
             color: scanLimitReached ? '#4ade80' : '#020a03',
             border: scanLimitReached ? '1px solid rgba(74,222,128,0.2)' : 'none',
-            borderRadius: '10px',
-            padding: '12px 24px',
-            fontSize: '0.9rem',
-            fontWeight: '600',
+            borderRadius: '14px',
+            padding: '18px 24px',
+            fontSize: '1rem',
+            fontWeight: '700',
             cursor: isScanning || !businessProfile || scanLimitReached ? 'not-allowed' : 'pointer',
             opacity: !businessProfile ? 0.5 : scanLimitReached ? 0.7 : 1,
             transition: 'all 0.2s',
             fontFamily: 'Inter, system-ui, sans-serif',
-            boxShadow: !businessProfile || isScanning || scanLimitReached ? 'none' : '0 4px 16px rgba(74,222,128,0.25)',
+            letterSpacing: '-0.01em',
+            boxShadow: !businessProfile || isScanning || scanLimitReached ? 'none' : '0 6px 24px rgba(74,222,128,0.3), 0 0 0 1px rgba(74,222,128,0.1)',
           }}
           onMouseEnter={(e) => {
             if (!isScanning && businessProfile && !scanLimitReached) {
               e.currentTarget.style.backgroundColor = '#4ade80'
-              e.currentTarget.style.transform = 'translateY(-1px)'
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(74,222,128,0.3)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 12px 32px rgba(74,222,128,0.35), 0 0 0 1px rgba(74,222,128,0.15)'
             }
           }}
           onMouseLeave={(e) => {
             if (!isScanning && businessProfile && !scanLimitReached) {
               e.currentTarget.style.backgroundColor = '#22c55e'
               e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(74,222,128,0.25)'
+              e.currentTarget.style.boxShadow = '0 6px 24px rgba(74,222,128,0.3), 0 0 0 1px rgba(74,222,128,0.1)'
             }
           }}
         >
@@ -421,11 +424,9 @@ export default function MonitorPage() {
             </>
           )}
         </button>
-        {!scanLimitReached && (
-          <span style={{ color: '#6b8070', fontSize: '0.78rem' }}>
-            {scansUsedToday}/{dailyLimit} scan{dailyLimit !== 1 ? 's' : ''} used today
-          </span>
-        )}
+        <p style={{ color: '#6b8070', fontSize: '0.75rem', textAlign: 'center', margin: '8px 0 0' }}>
+          {scanLimitReached ? 'Scan limit reached — resets at midnight' : `${scansUsedToday}/${dailyLimit} scan${dailyLimit !== 1 ? 's' : ''} used today`}
+        </p>
       </div>
 
       {/* Scanning state */}
